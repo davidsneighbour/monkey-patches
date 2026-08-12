@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Auto-bumps @version on staged .user.js files before each commit.
+# Installed via `npm run prepare` (see tools/install-git-hooks.mjs).
+set -euo pipefail
+
+files=$(git diff --name-only --cached --diff-filter=ACM -- '*.user.js' || true)
+
+if [ -n "$files" ]; then
+  node tools/userscript-version.mjs --staged
+  echo "$files" | xargs -r git add
+fi

@@ -1,0 +1,58 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "ignoreUnknown": false
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 100
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "semicolons": "always",
+      "trailingCommas": "all"
+    },
+    "globals": [
+      "unsafeWindow",
+      "GM_addStyle",
+      "GM_deleteValue",
+      "GM_getValue",
+      "GM_info",
+      "GM_listValues",
+      "GM_notification",
+      "GM_openInTab",
+      "GM_registerMenuCommand",
+      "GM_setValue",
+      "GM_xmlhttpRequest"
+    ]
+  },
+  "overrides": [
+    {
+      "include": ["scripts/**/*.user.js"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUnusedVariables": "off"
+          },
+          "suspicious": {
+            "noAssignInExpressions": "off"
+          }
+        }
+      }
+    }
+  ]
+}

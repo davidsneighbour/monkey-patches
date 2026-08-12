@@ -1,0 +1,25 @@
+{
+  "name": "monkey-patches",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Personal Tampermonkey userscripts, organised by topic, with Git-based install/update and automatic version bumping.",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "prepare": "node tools/install-git-hooks.mjs",
+    "lint": "biome lint .",
+    "format": "biome format --write .",
+    "format:check": "biome format .",
+    "fix": "biome check --write .",
+    "test": "vitest run",
+    "userscripts:validate": "node tools/userscript-validate.mjs",
+    "userscripts:version": "node tools/userscript-version.mjs",
+    "check": "biome check . && npm run userscripts:validate && npm run test"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "vitest": "^3.0.0"
+  }
+}
