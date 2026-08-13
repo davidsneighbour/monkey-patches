@@ -1,7 +1,8 @@
 // ==UserScript==
 // @name         Auto Cookie Monster
 // @namespace    https://github.com/davidsneighbour/monkey-patches
-// @version      1.0.0
+// @author       Patrick Kollitsch
+// @version      1.0.1
 // @description  Automatically loads Cookie Monster after Cookie Clicker is ready.
 // @match        https://orteil.dashnet.org/cookieclicker/*
 // @grant        none
