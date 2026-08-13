@@ -1,5 +1,5 @@
 {
-  "name": "monkey-patches",
+  "name": "@davidsneighbour/monkey-patches",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -19,7 +19,7 @@
     "check": "biome check . && npm run userscripts:validate && npm run test"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
-    "vitest": "^3.0.0"
+    "@biomejs/biome": "^2.5.8",
+    "vitest": "^4.1.10"
   }
 }
