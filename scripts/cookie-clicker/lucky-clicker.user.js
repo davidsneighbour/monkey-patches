@@ -2,7 +2,7 @@
 // @name         Lucky Clicker
 // @namespace    https://github.com/davidsneighbour/monkey-patches
 // @author       Patrick Kollitsch
-// @version      1.0.0
+// @version      1.0.1
 // @description  Click lucky news.
 // @match        https://orteil.dashnet.org/cookieclicker/*
 // @grant        none
@@ -12,49 +12,25 @@
 // ==/UserScript==
 
 (() => {
+  'use strict';
+
   const config = {
     intervalMs: 250,
+    pollMs: 250,
+    timeoutMs: 60_000,
     log: true,
   };
 
-  /**
-   * Logs messages with a consistent prefix.
-   *
-   * @param {...unknown} args - Values to log.
-   * @returns {void}
-   */
   function info(...args) {
     if (config.log) {
       console.log('[cookie-clicker-fortune-clicker]', ...args);
     }
   }
 
-  /**
-   * Validates that the required Cookie Clicker globals exist.
-   *
-   * @returns {boolean}
-   */
   function isGameReady() {
     return typeof window.Game !== 'undefined' && typeof window.Game.tickerL !== 'undefined';
   }
 
-  if (!isGameReady()) {
-    console.error(
-      '[cookie-clicker-fortune-clicker] Cookie Clicker is not ready yet. Open the game first, then run the script again.',
-    );
-    return;
-  }
-
-  if (window.__cookieClickerFortuneClickerInterval) {
-    clearInterval(window.__cookieClickerFortuneClickerInterval);
-    info('Stopped previous watcher.');
-  }
-
-  /**
-   * Clicks the ticker when the current ticker effect is a fortune.
-   *
-   * @returns {void}
-   */
   function clickFortuneIfPresent() {
     try {
       if (window.Game.TickerEffect && window.Game.TickerEffect.type === 'fortune') {
@@ -66,11 +42,33 @@
     }
   }
 
-  window.__cookieClickerFortuneClickerInterval = window.setInterval(
-    clickFortuneIfPresent,
-    config.intervalMs,
-  );
+  function start() {
+    if (window.__cookieClickerFortuneClickerInterval) {
+      window.clearInterval(window.__cookieClickerFortuneClickerInterval);
+      info('Stopped previous watcher.');
+    }
 
-  info(`Started. Checking every ${config.intervalMs} ms.`);
-  info('To stop it later, run: clearInterval(window.__cookieClickerFortuneClickerInterval);');
+    window.__cookieClickerFortuneClickerInterval = window.setInterval(
+      clickFortuneIfPresent,
+      config.intervalMs,
+    );
+
+    info(`Started. Checking every ${config.intervalMs} ms.`);
+    info('To stop it later, run: clearInterval(window.__cookieClickerFortuneClickerInterval);');
+  }
+
+  const start_time = Date.now();
+  const waitForGame = window.setInterval(() => {
+    if (isGameReady()) {
+      window.clearInterval(waitForGame);
+      start();
+    } else if (Date.now() - start_time > config.timeoutMs) {
+      window.clearInterval(waitForGame);
+      console.error(
+        '[cookie-clicker-fortune-clicker] Cookie Clicker was not ready in time.\n' +
+          'Please make sure you are running this script on a Cookie Clicker webpage, ' +
+          'and the page is fully loaded.',
+      );
+    }
+  }, config.pollMs);
 })();

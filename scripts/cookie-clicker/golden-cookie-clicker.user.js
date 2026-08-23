@@ -2,7 +2,7 @@
 // @name         Golden Cookie Clicker
 // @namespace    https://github.com/davidsneighbour/monkey-patches
 // @author       Patrick Kollitsch
-// @version      1.0.1
+// @version      1.0.2
 // @description  Automatically clicks golden cookies and reindeer in Cookie Clicker.
 // @match        https://orteil.dashnet.org/cookieclicker/*
 // @icon         data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
@@ -13,6 +13,8 @@
 // ==/UserScript==
 
 (() => {
+  'use strict';
+
   const config = {
     pollMs: 250,
     timeoutMs: 60_000,

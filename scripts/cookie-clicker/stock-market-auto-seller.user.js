@@ -2,7 +2,7 @@
 // @name         Stock Market Auto Seller
 // @namespace    https://github.com/davidsneighbour/monkey-patches
 // @author       Patrick Kollitsch
-// @version      1.0.0
+// @version      1.0.1
 // @description  Automatically sells all held stock in the Bank's Stock Market minigame whenever a good's value rises above a configurable threshold.
 // @match        https://orteil.dashnet.org/cookieclicker/*
 // @grant        none
@@ -12,6 +12,8 @@
 // ==/UserScript==
 
 (() => {
+  'use strict';
+
   const config = {
     // The "value: $X.XX" line shown in each stock's box. Sell everything
     // held for a good once its value rises above this.
@@ -49,7 +51,7 @@
         // an unexpected missed sell distinguishable from a normal no-op.
         console.debug(
           `Stock Market Auto Seller: skipped good #${good.id} at $${good.val.toFixed(2)} ` +
-          `(stock ${good.stock}, cookies ${window.Game.cookies}).`,
+            `(stock ${good.stock}, cookies ${window.Game.cookies}).`,
         );
       }
     }

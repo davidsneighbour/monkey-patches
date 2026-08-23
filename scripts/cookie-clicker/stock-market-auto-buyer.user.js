@@ -2,7 +2,7 @@
 // @name         Stock Market Auto Buyer
 // @namespace    https://github.com/davidsneighbour/monkey-patches
 // @author       Patrick Kollitsch
-// @version      1.0.1
+// @version      1.0.2
 // @description  Automatically buys all affordable stock in the Bank's Stock Market minigame whenever a good's value drops below a configurable threshold.
 // @match        https://orteil.dashnet.org/cookieclicker/*
 // @grant        none
@@ -12,6 +12,8 @@
 // ==/UserScript==
 
 (() => {
+  'use strict';
+
   const config = {
     // The "value: $X.XX" line shown in each stock's box. Buy everything
     // affordable for a good once its value drops below this.

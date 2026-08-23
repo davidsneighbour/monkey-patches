@@ -2,7 +2,7 @@
 // @name         Banking Highlighter
 // @namespace    https://github.com/davidsneighbour/monkey-patches
 // @author       Patrick Kollitsch
-// @version      1.0.0
+// @version      1.0.1
 // @description  Highlights Cookie Clicker stock market rows by selected dollar values.
 // @match        https://orteil.dashnet.org/cookieclicker/*
 // @grant        GM_addStyle
@@ -12,6 +12,8 @@
 // ==/UserScript==
 
 (() => {
+  'use strict';
+
   const RULES = [
     // exactly $1 (green)
     { regex: /\$1(?![\d.,])/, css: '2px solid green', className: 'tm-highlight-dollar-1-exact' },
@@ -50,7 +52,13 @@
   }
 
   function startObserver() {
-    const observer = new MutationObserver(() => updateHighlighting(document));
+    // The page mutates constantly (cookie counter, particles, etc.), so
+    // debounce rather than re-scanning every bank good on every mutation.
+    let debounceId;
+    const observer = new MutationObserver(() => {
+      window.clearTimeout(debounceId);
+      debounceId = window.setTimeout(() => updateHighlighting(document), 100);
+    });
     observer.observe(document.body, {
       childList: true,
       subtree: true,

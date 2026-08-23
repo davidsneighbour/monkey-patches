@@ -2,7 +2,7 @@
 // @name         Auto Cookie Monster
 // @namespace    https://github.com/davidsneighbour/monkey-patches
 // @author       Patrick Kollitsch
-// @version      1.0.1
+// @version      1.0.2
 // @description  Automatically loads Cookie Monster after Cookie Clicker is ready.
 // @match        https://orteil.dashnet.org/cookieclicker/*
 // @grant        none
@@ -12,6 +12,8 @@
 // ==/UserScript==
 
 (function autoCookieMonster() {
+  'use strict';
+
   const config = {
     modUrl: 'https://cookiemonsterteam.github.io/CookieMonster/dist/CookieMonster.js',
     waitMs: 5000,

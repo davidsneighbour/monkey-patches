@@ -2,7 +2,7 @@
 // @name         Default Bulk Buy
 // @namespace    https://github.com/davidsneighbour/monkey-patches
 // @author       Patrick Kollitsch
-// @version      1.0.0
+// @version      1.0.1
 // @description  Switches the store's buy quantity to x10 on load instead of Cookie Clicker's default x1.
 // @match        https://orteil.dashnet.org/cookieclicker/*
 // @grant        none
@@ -12,6 +12,8 @@
 // ==/UserScript==
 
 (() => {
+  'use strict';
+
   const config = {
     pollMs: 250,
     timeoutMs: 60_000,
