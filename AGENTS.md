@@ -10,6 +10,10 @@ Personal Tampermonkey userscripts, organised by topic, distributed via raw GitHu
 Tampermonkey's built-in auto-update mechanism. No build step, no package publishing, no
 releases. See [README.md](README.md) for the full user-facing explanation.
 
+For anything Tampermonkey-specific — header tags, `GM_*`/`GM.*` API usage, sandbox modes,
+`@match`/`@include` patterns, or debugging a userscript — check `.agents/skills/tampermonkey/`
+(`SKILL.md` plus its `references/` subtopics) before relying on general knowledge.
+
 ## Structure
 
 ```text
