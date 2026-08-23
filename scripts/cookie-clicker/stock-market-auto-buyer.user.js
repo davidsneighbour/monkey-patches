@@ -2,7 +2,7 @@
 // @name         Stock Market Auto Buyer
 // @namespace    https://github.com/davidsneighbour/monkey-patches
 // @author       Patrick Kollitsch
-// @version      1.0.0
+// @version      1.0.1
 // @description  Automatically buys all affordable stock in the Bank's Stock Market minigame whenever a good's value drops below a configurable threshold.
 // @match        https://orteil.dashnet.org/cookieclicker/*
 // @grant        none
@@ -16,10 +16,10 @@
     // The "value: $X.XX" line shown in each stock's box. Buy everything
     // affordable for a good once its value drops below this.
     buyBelowValue: 1.2,
-    // How often to scan the market and buy, in milliseconds. Kept short
-    // because a good's value can swing several dollars per in-game tick
-    // (~1s), so a longer interval can miss a dip below buyBelowValue entirely.
-    intervalMs: 2_000,
+    // How often to scan the market and buy, in milliseconds. Good values
+    // in practice don't change more often than every ~30s, so 25s catches
+    // a dip below buyBelowValue without polling far more than necessary.
+    intervalMs: 25_000,
     pollMs: 250,
     timeoutMs: 60_000,
   };
