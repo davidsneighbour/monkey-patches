@@ -2,7 +2,7 @@
 // @name         Buff Combo Clicker
 // @namespace    https://github.com/davidsneighbour/monkey-patches
 // @author       Patrick Kollitsch
-// @version      1.0.0
+// @version      1.0.1
 // @description  Auto-clicks the big cookie at a configurable rate whenever two or more positive golden-cookie effects (e.g. Frenzy + Click frenzy) are active at once.
 // @match        https://orteil.dashnet.org/cookieclicker/*
 // @grant        none
@@ -19,7 +19,7 @@
     // (Frenzy, Click frenzy, Cookie storm, ...) are active simultaneously.
     minActiveBuffs: 2,
     // How fast to click the big cookie while the condition holds.
-    clicksPerSecond: 7,
+    clicksPerSecond: 30,
     pollMs: 250,
     timeoutMs: 60_000,
   };
@@ -65,8 +65,8 @@
       window.clearInterval(waitForGame);
       console.error(
         'Buff Combo Clicker: Cookie Clicker API is not ready or invalid.\n' +
-          'Please make sure you are running this script on a Cookie Clicker webpage, ' +
-          'and the page is fully loaded.',
+        'Please make sure you are running this script on a Cookie Clicker webpage, ' +
+        'and the page is fully loaded.',
       );
     }
   }, config.pollMs);
