@@ -43,6 +43,8 @@ tests/                                     # Vitest tests for tools/lib/
 - Biome for linting and formatting (`biome.json`). Run `npm run check` before considering work
   done — it must remain non-mutating (lint + validate + test only, never writes files).
   `npm run fix` / `npm run format` are the separate, mutating commands.
+- Commit finished tasks before handing work back, unless the human owner explicitly asks not to
+  commit, or a blocker prevents a correct commit.
 - Keep `tools/lib/*.mjs` pure (no `process.exit`, no direct I/O side effects beyond what's
   explicitly passed in) so it stays unit-testable. `tools/*.mjs` are the thin CLI wrappers that
   do I/O and call into `tools/lib/`.

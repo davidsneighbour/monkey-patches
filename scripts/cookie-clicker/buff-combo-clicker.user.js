@@ -2,8 +2,8 @@
 // @name         Buff Combo Clicker
 // @namespace    https://github.com/davidsneighbour/monkey-patches
 // @author       Patrick Kollitsch
-// @version      1.0.1
-// @description  Auto-clicks the big cookie at a configurable rate whenever two or more positive golden-cookie effects (e.g. Frenzy + Click frenzy) are active at once.
+// @version      1.0.2
+// @description  Auto-clicks combo buffs and casts Force the Hand of Fate when positive golden-cookie effects are close to expiring.
 // @match        https://orteil.dashnet.org/cookieclicker/*
 // @grant        none
 // @run-at       document-idle
@@ -20,34 +20,119 @@
     minActiveBuffs: 2,
     // How fast to click the big cookie while the condition holds.
     clicksPerSecond: 30,
+    handOfFateBuffWindowSeconds: 50,
+    handOfFateSingleBuffCutoffSeconds: 30,
+    handOfFateCastCooldownMs: 1000,
     pollMs: 250,
     timeoutMs: 60_000,
   };
+
+  let lastHandOfFateCastAt = 0;
 
   function isGameReady() {
     return (
       typeof window.Game === 'object' &&
       window.Game !== null &&
       typeof window.Game.ClickCookie === 'function' &&
-      typeof window.Game.buffs === 'object'
+      typeof window.Game.buffs === 'object' &&
+      typeof window.Game.ObjectsById === 'object'
     );
   }
 
-  function countPositiveBuffs() {
-    let count = 0;
+  function getBuffRemainingSeconds(buff) {
+    const fps =
+      typeof window.Game.fps === 'number' && window.Game.fps > 0 ? window.Game.fps : 30;
+    return Number.isFinite(buff.time) ? buff.time / fps : Number.POSITIVE_INFINITY;
+  }
+
+  function getPositiveBuffs() {
+    const buffs = [];
     for (const name in window.Game.buffs) {
       // The game itself tags golden-cookie buffs with aura:1 (positive,
       // e.g. Frenzy, Click frenzy) or aura:2 (negative, e.g. Clot) - see
       // Game.buffType() definitions in the game's own main.js. Buffs from
       // other sources (haggler's luck, pixie luck, ...) carry no aura and
       // are correctly excluded here.
-      if (window.Game.buffs[name].aura === 1) count++;
+      const buff = window.Game.buffs[name];
+      if (buff.aura === 1) {
+        buffs.push({
+          name,
+          remainingSeconds: getBuffRemainingSeconds(buff),
+        });
+      }
     }
-    return count;
+    return buffs;
+  }
+
+  function getGrimoire() {
+    return window.Game.ObjectsById[7]?.minigame;
+  }
+
+  function getHandOfFateSpell(grimoire) {
+    return grimoire?.spells?.['hand of fate'];
+  }
+
+  function canCastHandOfFate(grimoire, spell) {
+    if (
+      typeof grimoire?.castSpell !== 'function' ||
+      typeof grimoire.getSpellCost !== 'function' ||
+      typeof grimoire.magic !== 'number' ||
+      typeof grimoire.magicM !== 'number' ||
+      typeof spell !== 'object' ||
+      spell === null
+    ) {
+      return false;
+    }
+
+    const cost = grimoire.getSpellCost(spell);
+    return Number.isFinite(cost) && grimoire.magic >= cost;
+  }
+
+  function shouldCastHandOfFate(positiveBuffs, grimoire) {
+    if (positiveBuffs.length === 0) return false;
+
+    const expiringBuffs = positiveBuffs.filter(
+      (buff) => buff.remainingSeconds <= config.handOfFateBuffWindowSeconds,
+    );
+    if (expiringBuffs.length === 0) return false;
+
+    const isMagicFull = grimoire.magic >= grimoire.magicM;
+    if (!isMagicFull && positiveBuffs.length < config.minActiveBuffs) return false;
+
+    if (
+      isMagicFull &&
+      positiveBuffs.length === 1 &&
+      positiveBuffs[0].remainingSeconds < config.handOfFateSingleBuffCutoffSeconds
+    ) {
+      return false;
+    }
+
+    return true;
+  }
+
+  function maybeCastHandOfFate(positiveBuffs) {
+    const now = Date.now();
+    if (now - lastHandOfFateCastAt < config.handOfFateCastCooldownMs) return;
+
+    const grimoire = getGrimoire();
+    const spell = getHandOfFateSpell(grimoire);
+    if (
+      !canCastHandOfFate(grimoire, spell) ||
+      !shouldCastHandOfFate(positiveBuffs, grimoire)
+    ) {
+      return;
+    }
+
+    if (grimoire.castSpell(spell)) {
+      lastHandOfFateCastAt = now;
+    }
   }
 
   function tick() {
-    if (countPositiveBuffs() >= config.minActiveBuffs) {
+    const positiveBuffs = getPositiveBuffs();
+    maybeCastHandOfFate(positiveBuffs);
+
+    if (positiveBuffs.length >= config.minActiveBuffs) {
       window.Game.ClickCookie();
     }
   }
