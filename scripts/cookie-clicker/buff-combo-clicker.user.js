@@ -2,8 +2,8 @@
 // @name         Buff Combo Clicker
 // @namespace    https://github.com/davidsneighbour/monkey-patches
 // @author       Patrick Kollitsch
-// @version      1.0.3
-// @description  Auto-clicks combo buffs and casts Force the Hand of Fate when positive golden-cookie effects are close to expiring.
+// @version      1.0.4
+// @description  Auto-clicks positive golden-cookie buffs and casts Force the Hand of Fate when positive effects are close to expiring.
 // @match        https://orteil.dashnet.org/cookieclicker/*
 // @grant        none
 // @run-at       document-idle
@@ -15,14 +15,11 @@
   'use strict';
 
   const config = {
-    // Auto-click while at least this many positive golden-cookie buffs
-    // (Frenzy, Click frenzy, Cookie storm, ...) are active simultaneously.
-    minComboBuffs: 2,
-    // Also auto-click these high-value buffs even when they are the only
-    // active positive golden-cookie buff.
-    singleBuffClickNames: new Set(['Click frenzy']),
     // How fast to click the big cookie while the condition holds.
     clicksPerSecond: 30,
+    // Cast Force the Hand of Fate without full magic only while at least this
+    // many positive golden-cookie buffs are active simultaneously.
+    handOfFateMinBuffs: 2,
     handOfFateBuffWindowSeconds: 50,
     handOfFateSingleBuffCutoffSeconds: 30,
     handOfFateCastCooldownMs: 1000,
@@ -100,7 +97,7 @@
     if (expiringBuffs.length === 0) return false;
 
     const isMagicFull = grimoire.magic >= grimoire.magicM;
-    if (!isMagicFull && positiveBuffs.length < config.minComboBuffs) return false;
+    if (!isMagicFull && positiveBuffs.length < config.handOfFateMinBuffs) return false;
 
     if (
       isMagicFull &&
@@ -135,11 +132,7 @@
     const positiveBuffs = getPositiveBuffs();
     maybeCastHandOfFate(positiveBuffs);
 
-    const shouldClick =
-      positiveBuffs.length >= config.minComboBuffs ||
-      positiveBuffs.some((buff) => config.singleBuffClickNames.has(buff.name));
-
-    if (shouldClick) {
+    if (positiveBuffs.length > 0) {
       window.Game.ClickCookie();
     }
   }
