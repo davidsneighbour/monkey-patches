@@ -19,7 +19,7 @@
     "check": "biome check . && npm run userscripts:validate && npm run test"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.8",
-    "vitest": "^4.1.11"
+    "@biomejs/biome": "^2.6.8",
+    "vitest": "^4.1.12"
   }
 }
